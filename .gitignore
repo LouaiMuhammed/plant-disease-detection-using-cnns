@@ -106,6 +106,7 @@ coverage.xml
 data/
 material/
 saved_models/
+data1/
 
 # Translations
 *.mo
