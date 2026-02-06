@@ -1,25 +1,44 @@
-from torch.utils.data import Dataset, random_split
-from torchvision.datasets import ImageFolder
-from collections import Counter
+"""
+Custom dataset for class-aware augmentation
+"""
+from torch.utils.data import Dataset
 
-def create_datasets(data_dir, light_transform, strong_transform, val_transform):
-    full_dataset = ImageFolder(root=data_dir, transform=None)
 
-    train_size = int(0.8 * len(full_dataset))
-    val_size = len(full_dataset) - train_size
-    train_subset, val_subset = random_split(full_dataset, [train_size, val_size])
+class ClassAwareDataset(Dataset):
+    """
+    Dataset that applies different transformations based on class rarity
+    """
+    def __init__(self, subset, rare_classes, light_transform, strong_transform):
+        """
+        Args:
+            subset: torch.utils.data.Subset object from random_split
+            rare_classes: set of class indices considered rare
+            light_transform: transform for common classes
+            strong_transform: transform for rare classes
+        """
+        self.subset = subset
+        self.rare_classes = rare_classes
+        self.light_transform = light_transform
+        self.strong_transform = strong_transform
 
-    train_labels = [full_dataset.targets[i] for i in train_subset.indices]
-    class_counts = Counter(train_labels)
+    def __len__(self):
+        return len(self.subset)
 
-    rare_classes = {
-        cls for cls, count in class_counts.items() if count < 200
-    }
-
-    train_dataset = ClassAwareDataset(
-        train_subset, rare_classes, light_transform, strong_transform
-    )
-
-    val_subset.dataset.transform = val_transform
-
-    return train_dataset, val_subset, full_dataset.classes
+    def __getitem__(self, idx):
+        # Get the underlying ImageFolder dataset
+        dataset = self.subset.dataset
+        # Get the real index in the original dataset
+        real_idx = self.subset.indices[idx]
+        
+        # Get image path and label
+        path, label = dataset.samples[real_idx]
+        # Load image (always returns PIL Image)
+        img = dataset.loader(path)
+        
+        # Apply different transforms based on class rarity
+        if label in self.rare_classes:
+            img = self.strong_transform(img)
+        else:
+            img = self.light_transform(img)
+        
+        return img, label

@@ -107,6 +107,7 @@ data/
 material/
 saved_models/
 data1/
+data2/
 
 # Translations
 *.mo
