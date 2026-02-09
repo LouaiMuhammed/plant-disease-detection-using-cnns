@@ -2,7 +2,7 @@
 Data augmentation and transformation utilities
 """
 from torchvision import transforms
-from config import IMAGE_SIZE, IMAGENET_MEAN, IMAGENET_STD
+from .config import IMAGE_SIZE, IMAGENET_MEAN, IMAGENET_STD
 
 
 def get_light_transform():

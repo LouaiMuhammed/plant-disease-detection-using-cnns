@@ -3,16 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from config import DATA_DIR
-from utils import (
+from .config import DATA_DIR
+from .utils import (
     load_dataset, split_dataset, get_class_distribution,
     identify_rare_classes, create_weighted_sampler, prepare_datasets,
     create_dataloaders, print_dataset_info, print_class_distribution,
     print_rare_classes, print_directory_counts
 )
-from models import get_resnet_model
-from train import setup_training, train_model
-from evaluate import evaluate
+from .models import get_resnet_model
+from .train import setup_training, train_model
+from .evaluate import evaluate
 
 
 def main():

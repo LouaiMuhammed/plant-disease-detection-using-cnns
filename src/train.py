@@ -5,27 +5,27 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-from config import (
+from .config import (
     NUM_EPOCHS, LEARNING_RATE_HEAD, LEARNING_RATE_BACKBONE,
-    MODEL_SAVE_PATH, EARLY_STOPPING_PATIENCE, EARLY_STOPPING_MIN_DELTA
+    MOBILENET_NUM_EPOCHS, MOBILENET_LR_HEAD, MOBILENET_LR_BACKBONE,
+    MODEL_SAVE_PATH, MOBILENET_MODEL_SAVE_PATH,
+    EARLY_STOPPING_PATIENCE, EARLY_STOPPING_MIN_DELTA
 )
-from early_stopping import EarlyStopping
+from .early_stopping import EarlyStopping
 
 
-def setup_training(model, full_dataset, device):
+def setup_training_resnet(model, train_labels, num_classes, device):
     """
-    Setup loss function and optimizer
+    Setup loss function and optimizer for ResNet
     
     Args:
-        model: PyTorch model
-        full_dataset: Full dataset for computing class weights
+        model: ResNet model
+        train_labels: List of training labels
+        num_classes: Number of classes
         device: Device to use
-        
-    Returns:
-        criterion, optimizer
     """
     # Compute class weights (inverse frequency)
-    class_counts = np.bincount([label for _, label in full_dataset.imgs])
+    class_counts = np.bincount(train_labels, minlength=num_classes)
     weights = 1.0 / (class_counts + 1e-6)
     weights = torch.tensor(weights, dtype=torch.float32).to(device)
     
@@ -41,20 +41,36 @@ def setup_training(model, full_dataset, device):
     return criterion, optimizer
 
 
-def train_epoch(model, train_loader, criterion, optimizer, device):
+def setup_training_mobilenet(model, train_labels, num_classes, device):
     """
-    Train for one epoch
+    Setup loss function and optimizer for MobileNet
     
     Args:
-        model: PyTorch model
-        train_loader: Training data loader
-        criterion: Loss function
-        optimizer: Optimizer
+        model: MobileNet model
+        train_labels: List of training labels
+        num_classes: Number of classes
         device: Device to use
-        
-    Returns:
-        train_loss, train_acc
     """
+    # Compute class weights from training labels
+    class_counts = np.bincount(train_labels, minlength=num_classes)
+    weights = 1.0 / (class_counts + 1e-6)
+    weights = torch.tensor(weights, dtype=torch.float32).to(device)
+    
+    # Loss function with class weights
+    criterion = nn.CrossEntropyLoss(weight=weights)
+    
+    # MobileNet-specific optimizer
+    # Optimize classifier (head) and last feature block (backbone)
+    optimizer = torch.optim.Adam([
+        {'params': model.classifier.parameters(), 'lr': MOBILENET_LR_HEAD},
+        {'params': model.features[-1].parameters(), 'lr': MOBILENET_LR_BACKBONE}
+    ])
+    
+    return criterion, optimizer
+
+
+def train_epoch(model, train_loader, criterion, optimizer, device):
+    """Train for one epoch"""
     model.train()
     running_loss = 0.0
     correct = 0
@@ -81,18 +97,7 @@ def train_epoch(model, train_loader, criterion, optimizer, device):
 
 
 def validate_epoch(model, val_loader, criterion, device):
-    """
-    Validate for one epoch
-    
-    Args:
-        model: PyTorch model
-        val_loader: Validation data loader
-        criterion: Loss function
-        device: Device to use
-        
-    Returns:
-        val_loss, val_acc
-    """
+    """Validate for one epoch"""
     model.eval()
     val_running_loss = 0.0
     val_correct = 0
@@ -115,21 +120,20 @@ def validate_epoch(model, val_loader, criterion, device):
     return val_loss, val_acc
 
 
-def train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=NUM_EPOCHS):
+def train_model(model, train_loader, val_loader, criterion, optimizer, device, 
+                num_epochs=NUM_EPOCHS, model_save_path=MODEL_SAVE_PATH):
     """
     Full training loop with early stopping
     
     Args:
-        model: PyTorch model
+        model: Model to train
         train_loader: Training data loader
         val_loader: Validation data loader
         criterion: Loss function
         optimizer: Optimizer
         device: Device to use
         num_epochs: Number of epochs to train
-        
-    Returns:
-        Dictionary with training history
+        model_save_path: Path to save best model
     """
     early_stopping = EarlyStopping(
         patience=EARLY_STOPPING_PATIENCE,
@@ -155,7 +159,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, device, n
         # Save best model
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            torch.save(model.state_dict(), MODEL_SAVE_PATH)
+            torch.save(model.state_dict(), model_save_path)
         
         # Print progress
         print(f"Epoch {epoch+1}/{num_epochs} | "

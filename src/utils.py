@@ -1,68 +1,51 @@
 """
-Data loading and preparation utilities
+Data loading and preparation utilities for pre-split datasets
 """
 import os
 import numpy as np
 import torch
 from collections import Counter
-from torch.utils.data import random_split, DataLoader, WeightedRandomSampler
+from torch.utils.data import DataLoader, WeightedRandomSampler
 from torchvision.datasets import ImageFolder
 
-from config import (
-    DATA_DIR, BATCH_SIZE, TRAIN_SPLIT, RARE_THRESHOLD,
+from .config import (
+    TRAIN_DIR, VAL_DIR, BATCH_SIZE, RARE_THRESHOLD,
     NUM_WORKERS_TRAIN, NUM_WORKERS_VAL, PIN_MEMORY
 )
-from transforms import get_light_transform, get_strong_transform, get_val_transform
-from dataset import ClassAwareDataset
+from .transforms import get_light_transform, get_strong_transform, get_val_transform
+from .datasets import ClassAwareDataset
 
 
-def load_dataset():
+def load_datasets():
     """
-    Load the full dataset from disk
+    Load datasets from pre-split train/val directories
     
     Returns:
-        ImageFolder dataset
+        train_dataset_base, val_dataset_base: ImageFolder datasets without transforms
+        classes: List of class names
+        num_classes: Number of classes
     """
-    full_dataset = ImageFolder(
-        root=DATA_DIR,
-        transform=None
-    )
-    return full_dataset
+    train_dataset_base = ImageFolder(root=TRAIN_DIR, transform=None)
+    val_dataset_base = ImageFolder(root=VAL_DIR, transform=None)
+    
+    classes = train_dataset_base.classes
+    num_classes = len(classes)
+    
+    return train_dataset_base, val_dataset_base, classes, num_classes
 
 
-def split_dataset(full_dataset):
+def get_class_distribution(train_dataset_base):
     """
-    Split dataset into train and validation sets
+    Get class distribution from training dataset
     
     Args:
-        full_dataset: ImageFolder dataset
-        
-    Returns:
-        train_dataset, val_dataset (both Subset objects)
-    """
-    train_size = int(TRAIN_SPLIT * len(full_dataset))
-    val_size = len(full_dataset) - train_size
-    
-    train_dataset, val_dataset = random_split(
-        full_dataset,
-        [train_size, val_size]
-    )
-    
-    return train_dataset, val_dataset
-
-
-def get_class_distribution(full_dataset, train_dataset):
-    """
-    Compute class distribution in training set
-    
-    Args:
-        full_dataset: Full ImageFolder dataset
-        train_dataset: Training subset
+        train_dataset_base: Training ImageFolder dataset
         
     Returns:
         class_counts: Counter object with class counts
+        train_labels: List of all training labels
     """
-    train_labels = [full_dataset.targets[i] for i in train_dataset.indices]
+    train_labels = [label for _, label in train_dataset_base.imgs]
     class_counts = Counter(train_labels)
     return class_counts, train_labels
 
@@ -122,14 +105,13 @@ def create_weighted_sampler(class_counts, train_labels, num_classes):
     return sampler
 
 
-def prepare_datasets(full_dataset, train_dataset, val_dataset, rare_classes):
+def prepare_datasets(train_dataset_base, val_dataset_base, rare_classes):
     """
     Apply transforms to datasets
     
     Args:
-        full_dataset: Full ImageFolder dataset
-        train_dataset: Training subset
-        val_dataset: Validation subset
+        train_dataset_base: Training ImageFolder dataset
+        val_dataset_base: Validation ImageFolder dataset
         rare_classes: Set of rare class indices
         
     Returns:
@@ -142,14 +124,14 @@ def prepare_datasets(full_dataset, train_dataset, val_dataset, rare_classes):
     
     # Create class-aware training dataset
     train_dataset = ClassAwareDataset(
-        train_dataset,
+        train_dataset_base,
         rare_classes,
         light_transform,
         strong_transform
     )
     
-    # Apply validation transform
-    val_dataset.dataset.transform = val_transform
+    # Create validation dataset with transform
+    val_dataset = ImageFolder(root=VAL_DIR, transform=val_transform)
     
     return train_dataset, val_dataset
 
@@ -185,38 +167,37 @@ def create_dataloaders(train_dataset, val_dataset, sampler):
     return train_loader, val_loader
 
 
-def print_dataset_info(full_dataset):
-    """
-    Print dataset information
-    """
-    print("Classes:", full_dataset.classes)
-    print("Number of images:", len(full_dataset))
+def print_dataset_info(classes, train_dataset, val_dataset):
+    """Print dataset information"""
+    print("Classes:", classes)
+    print("Number of training images:", len(train_dataset))
+    print("Number of validation images:", len(val_dataset))
 
 
-def print_class_distribution(full_dataset, class_counts):
-    """
-    Print class distribution in training set
-    """
+def print_class_distribution(classes, class_counts):
+    """Print class distribution in training set"""
     print("\nTraining class distribution:")
     for cls_idx, count in class_counts.items():
-        print(f"{full_dataset.classes[cls_idx]:35s}: {count}")
+        print(f"{classes[cls_idx]:35s}: {count}")
 
 
-def print_rare_classes(full_dataset, rare_classes):
-    """
-    Print identified rare classes
-    """
-    print("\nRare classes:")
+def print_rare_classes(classes, rare_classes):
+    """Print identified rare classes"""
+    print(f"\nRare classes (< {RARE_THRESHOLD} samples):")
     for cls_idx in rare_classes:
-        print(full_dataset.classes[cls_idx])
+        print(classes[cls_idx])
 
 
-def print_directory_counts(full_dataset):
-    """
-    Print image counts per class directory
-    """
-    print("\nImages per class directory:")
-    for idx, class_name in enumerate(full_dataset.classes):
-        class_path = os.path.join(DATA_DIR, class_name)
+def print_directory_counts(train_dir, val_dir, classes):
+    """Print image counts per class directory"""
+    print("\nTraining set class counts:")
+    for idx, class_name in enumerate(classes):
+        class_path = os.path.join(train_dir, class_name)
+        count = len(os.listdir(class_path)) if os.path.isdir(class_path) else 0
+        print(f"{class_name:35} : {count:5d}")
+    
+    print("\nValidation set class counts:")
+    for idx, class_name in enumerate(classes):
+        class_path = os.path.join(val_dir, class_name)
         count = len(os.listdir(class_path)) if os.path.isdir(class_path) else 0
         print(f"{class_name:35} : {count:5d}")
