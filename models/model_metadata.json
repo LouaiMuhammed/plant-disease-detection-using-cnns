@@ -36,7 +36,7 @@
     ]
   },
   "accuracy": {
-    "validation": 0.9649,
+    "validation": 0.9515,
     "per_class": {
       "citrus_black_spot": 0.7714285714285715,
       "citrus_canker": 0.948,
