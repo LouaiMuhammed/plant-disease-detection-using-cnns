@@ -38,12 +38,12 @@
   "accuracy": {
     "validation": 0.9649,
     "per_class": {
-      "citrus_black_spot": 0.9142857142857143,
-      "citrus_canker": 0.988,
-      "citrus_foliage_damage": 0.7690476190476191,
-      "citrus_greening": 0.9024390243902439,
-      "citrus_healthy": 0.975724353954581,
-      "citrus_mealybugs": 0.9362244897959183,
+      "citrus_black_spot": 0.7714285714285715,
+      "citrus_canker": 0.948,
+      "citrus_foliage_damage": 0.8642857142857143,
+      "citrus_greening": 0.9512195121951219,
+      "citrus_healthy": 0.9960845732184808,
+      "citrus_mealybugs": 0.8686224489795918,
       "citrus_melanose": 1.0,
       "mango_anthracnose": 0.99,
       "mango_bacterial_canker": 1.0,
@@ -51,8 +51,8 @@
       "mango_die_back": 1.0,
       "mango_gall_midge": 0.99,
       "mango_healthy": 1.0,
-      "mango_powdery_mildew": 1.0,
-      "mango_sooty_mould": 0.99
+      "mango_powdery_mildew": 0.99,
+      "mango_sooty_mould": 0.98
     }
   },
   "training_date": "2026-02-11",

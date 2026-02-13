@@ -46,5 +46,5 @@ class PlantDiseaseClassifier:
         }
 
 classifier = PlantDiseaseClassifier(r'models/mobilenet_v2_plant_disease.pt')
-result = classifier.predict(r"C:\Users\loaim\OneDrive\Desktop\img2.jpeg")
+result = classifier.predict(r"C:\Users\loaim\OneDrive\Desktop\WhatsApp Image 2026-02-13 at 4.21.31 PM.jpeg")
 print(result)
