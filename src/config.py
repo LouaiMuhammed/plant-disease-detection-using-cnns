@@ -18,7 +18,7 @@ LEARNING_RATE_HEAD = 1e-3
 LEARNING_RATE_BACKBONE = 1e-4
 
 # Training settings - MobileNet
-MOBILENET_NUM_EPOCHS = 15
+MOBILENET_NUM_EPOCHS = 10
 MOBILENET_LR_HEAD = 1e-3
 MOBILENET_LR_BACKBONE = 1e-4
 
@@ -28,8 +28,8 @@ EARLY_STOPPING_MIN_DELTA = 0.001
 
 # Model settings
 IMAGE_SIZE = 224
-MODEL_SAVE_PATH = "../models/ResNet_model.pth"
-RESNET_MODEL_SAVE_PATH = "../models/ResNet_model.pth"
+MODEL_SAVE_PATH = "../models/ResNet18_model.pth"
+RESNET_MODEL_SAVE_PATH = "../models/ResNet18_model.pth"
 MOBILENET_MODEL_SAVE_PATH = "../models/MobileNet_model.pth"
 
 # DataLoader settings
