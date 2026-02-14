@@ -156,7 +156,7 @@ transform = transforms.Compose([
 
 ## Support
 
-For questions, contact: [Your Email/Contact]
+For questions, contact: louaimuhammed@gmail.com
 
 Model version: 1.0
 Last updated: February 2026
