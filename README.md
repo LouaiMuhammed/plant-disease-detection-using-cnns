@@ -167,7 +167,7 @@ Low confidence typically indicates:
 ```
 plant-disease-detection-using-cnns/
 │
-├── data/                                    # Your dataset
+├── data/                                   
 │   ├── train/                              # Training images (24,499 images)
 │   │   ├── citrus_black_spot/             # 136 images
 │   │   ├── citrus_canker/                 # 8,998 images
@@ -205,12 +205,8 @@ plant-disease-detection-using-cnns/
 ├── notebooks/                               # Jupyter notebooks
 │   ├── 01. data_exploration_and_prototype.ipynb          # Prototype            
 │   └── 02. mobilenet_model.ipynb        # Deployed Model
+│   └── 03. hierarchical_classifier.ipynb        # Separation Experiement
 │
-├── models/                                  # Saved models
-│   ├── MobileNet_model.pth                 # Best model checkpoint (8.8 MB)
-│   ├── mobilenet_v2_plant_disease.pt       # TorchScript for deployment (9.1 MB)
-│   ├── mobilenet_v2_plant_disease.onnx     # ONNX format (9.1 MB)
-│   └── model_metadata.json                 # Model information
 │
 ├── deployment/                              # Deployment package for developers
 │   ├── models/

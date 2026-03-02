@@ -1,6 +1,6 @@
 {
   "model_name": "MobileNetV2 Plant Disease Classifier",
-  "version": "1.0",
+  "version": "1.1",
   "num_classes": 15,
   "classes": [
     "citrus_black_spot",
@@ -36,25 +36,25 @@
     ]
   },
   "accuracy": {
-    "validation": 0.9515,
+    "validation": 0.9674,
     "per_class": {
-      "citrus_black_spot": 0.7714285714285715,
-      "citrus_canker": 0.948,
-      "citrus_foliage_damage": 0.8642857142857143,
-      "citrus_greening": 0.9512195121951219,
-      "citrus_healthy": 0.9960845732184808,
-      "citrus_mealybugs": 0.8686224489795918,
+      "citrus_black_spot": 0.8285714285714286,
+      "citrus_canker": 0.9822222222222222,
+      "citrus_foliage_damage": 0.8238095238095238,
+      "citrus_greening": 0.8536585365853658,
+      "citrus_healthy": 0.995301487862177,
+      "citrus_mealybugs": 0.9158163265306123,
       "citrus_melanose": 1.0,
       "mango_anthracnose": 0.99,
       "mango_bacterial_canker": 1.0,
       "mango_cutting_weevil": 1.0,
       "mango_die_back": 1.0,
-      "mango_gall_midge": 0.99,
+      "mango_gall_midge": 1.0,
       "mango_healthy": 1.0,
       "mango_powdery_mildew": 0.99,
-      "mango_sooty_mould": 0.98
+      "mango_sooty_mould": 1.0
     }
   },
-  "training_date": "2026-02-11",
+  "training_date": "2026-02-28",
   "framework": "PyTorch 2.x"
 }

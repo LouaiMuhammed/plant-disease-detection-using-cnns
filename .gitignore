@@ -108,6 +108,8 @@ material/
 saved_models/
 data1/
 data2/
+notebook-test/
+models/
 
 # Translations
 *.mo

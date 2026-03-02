@@ -11,6 +11,14 @@ TRAIN_SPLIT = 0.8
 
 # Class imbalance settings
 RARE_THRESHOLD = 200
+OVERSAMPLING_ENABLED = True
+# Strength of minority oversampling. 1.0 = inverse-frequency, >1.0 = more aggressive.
+OVERSAMPLING_POWER = 0.8
+# Clamp oversampling multipliers to avoid unstable training.
+OVERSAMPLING_MIN_MULTIPLIER = 1.0
+OVERSAMPLING_MAX_MULTIPLIER = 8.0
+# Controls how many samples are drawn per training epoch via WeightedRandomSampler.
+OVERSAMPLING_EPOCH_MULTIPLIER = 1.0
 
 # Training settings - ResNet
 NUM_EPOCHS = 15

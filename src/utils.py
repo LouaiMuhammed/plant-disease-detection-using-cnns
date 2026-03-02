@@ -10,7 +10,10 @@ from torchvision.datasets import ImageFolder
 
 from .config import (
     TRAIN_DIR, VAL_DIR, BATCH_SIZE, RARE_THRESHOLD,
-    NUM_WORKERS_TRAIN, NUM_WORKERS_VAL, PIN_MEMORY
+    NUM_WORKERS_TRAIN, NUM_WORKERS_VAL, PIN_MEMORY,
+    OVERSAMPLING_ENABLED, OVERSAMPLING_POWER,
+    OVERSAMPLING_MIN_MULTIPLIER, OVERSAMPLING_MAX_MULTIPLIER,
+    OVERSAMPLING_EPOCH_MULTIPLIER
 )
 from .transforms import get_light_transform, get_strong_transform, get_val_transform
 from .datasets import ClassAwareDataset
@@ -80,25 +83,28 @@ def create_weighted_sampler(class_counts, train_labels, num_classes):
     Returns:
         WeightedRandomSampler
     """
-    # Compute class weights (inverse frequency)
-    class_weights = np.zeros(num_classes)
-    for cls_idx, count in class_counts.items():
-        class_weights[cls_idx] = 1.0 / count
-    
-    # Normalize weights
-    class_weights = class_weights / class_weights.sum()
-    
-    # Assign weight to each sample
-    sample_weights = [
-        class_weights[label] for label in train_labels
-    ]
-    
-    sample_weights = torch.DoubleTensor(sample_weights)
-    
+    # Build per-class multipliers so minority classes are sampled more often.
+    class_weights = np.ones(num_classes, dtype=np.float64)
+    if OVERSAMPLING_ENABLED:
+        max_count = max(class_counts.values())
+        for cls_idx in range(num_classes):
+            count = class_counts.get(cls_idx, 1)
+            multiplier = (max_count / count) ** OVERSAMPLING_POWER
+            multiplier = np.clip(
+                multiplier,
+                OVERSAMPLING_MIN_MULTIPLIER,
+                OVERSAMPLING_MAX_MULTIPLIER
+            )
+            class_weights[cls_idx] = multiplier
+
+    # Assign a weight to each sample according to its class multiplier.
+    sample_weights = torch.DoubleTensor([class_weights[label] for label in train_labels])
+    num_samples = max(1, int(len(sample_weights) * OVERSAMPLING_EPOCH_MULTIPLIER))
+
     # Create sampler
     sampler = WeightedRandomSampler(
         weights=sample_weights,
-        num_samples=len(sample_weights),
+        num_samples=num_samples,
         replacement=True
     )
     
@@ -160,7 +166,7 @@ def create_dataloaders(train_dataset, val_dataset, sampler):
         val_dataset,
         batch_size=BATCH_SIZE,
         shuffle=False,
-        num_workers=NUM_WORKERS_VAL,
+        num_workers=0,
         pin_memory=PIN_MEMORY
     )
     

@@ -66,7 +66,7 @@ async def predict(file: UploadFile = File(...)):
     
     Returns:
         {
-            "predicted_class": "citrus_canker",
+            "predicted_class": "class_A",
             "confidence": 0.985
         }
     """
@@ -87,11 +87,7 @@ async def predict(file: UploadFile = File(...)):
     
     return {
         "predicted_class": CLASSES[idx.item()],
-        "confidence": float(conf.item()),
-        "all_probabilities": {
-            CLASSES[i]: float(probs[i].item()) 
-            for i in range(len(CLASSES))
-        }
+        "confidence": round(float(conf.item()), 2),
     }
 
 
