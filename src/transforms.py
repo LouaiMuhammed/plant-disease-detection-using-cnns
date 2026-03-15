@@ -2,7 +2,7 @@
 Data augmentation and transformation utilities
 """
 from torchvision import transforms
-from .config import IMAGE_SIZE, IMAGENET_MEAN, IMAGENET_STD
+from .config import IMAGE_SIZE, DATASET_MEAN, DATASET_STD
 
 
 def get_light_transform():
@@ -14,8 +14,14 @@ def get_light_transform():
         transforms.RandomHorizontalFlip(p=0.3),
         transforms.ToTensor(),
         transforms.Normalize(
-            mean=IMAGENET_MEAN,
-            std=IMAGENET_STD
+            mean=DATASET_MEAN,
+            std=DATASET_STD
+        ),
+        transforms.RandomErasing(
+            p=0.3,
+            scale=(0.02, 0.2),
+            ratio=(0.3, 3.3),
+            value="random"
         )
     ])
 
@@ -41,9 +47,15 @@ def get_strong_transform():
         ),
         transforms.ToTensor(),
         transforms.Normalize(
-            mean=IMAGENET_MEAN,
-            std=IMAGENET_STD
-        )
+            mean=DATASET_MEAN,
+            std=DATASET_STD
+        ),
+        #transforms.RandomErasing(
+        #    p=0.5,
+        #    scale=(0.02, 0.33),
+        #    ratio=(0.3, 3.3),
+        #    value="random"
+        #)
     ])
 
 
@@ -55,7 +67,7 @@ def get_val_transform():
         transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
         transforms.ToTensor(),
         transforms.Normalize(
-            mean=IMAGENET_MEAN,
-            std=IMAGENET_STD
+            mean=DATASET_MEAN,
+            std=DATASET_STD
         )
     ])

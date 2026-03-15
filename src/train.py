@@ -63,7 +63,7 @@ def setup_training_mobilenet(model, train_labels, num_classes, device):
     # Optimize classifier (head) and last feature block (backbone)
     optimizer = torch.optim.Adam([
         {'params': model.classifier.parameters(), 'lr': MOBILENET_LR_HEAD},
-        {'params': model.features[-1].parameters(), 'lr': MOBILENET_LR_BACKBONE}
+        {'params': model.features[-2].parameters(), 'lr': MOBILENET_LR_BACKBONE}
     ])
     
     return criterion, optimizer

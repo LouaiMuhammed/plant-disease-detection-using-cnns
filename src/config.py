@@ -45,6 +45,10 @@ NUM_WORKERS_TRAIN = 0
 NUM_WORKERS_VAL = 4
 PIN_MEMORY = True
 
-# Image normalization (ImageNet statistics)
-IMAGENET_MEAN = [0.485, 0.456, 0.406]
-IMAGENET_STD = [0.229, 0.224, 0.225]
+# Image normalization (computed from current train dataset)
+DATASET_MEAN = [0.502275, 0.528588, 0.474627]
+DATASET_STD = [0.251866, 0.251658, 0.335502]
+
+# Backward-compatible aliases used by older notebook/code cells.
+IMAGENET_MEAN = DATASET_MEAN
+IMAGENET_STD = DATASET_STD
