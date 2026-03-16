@@ -7,6 +7,8 @@ import torch
 from collections import Counter
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from torchvision.datasets import ImageFolder
+from pathlib import Path
+
 
 from .config import (
     TRAIN_DIR, VAL_DIR, BATCH_SIZE, RARE_THRESHOLD,
