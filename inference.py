@@ -3,6 +3,7 @@ import torch
 import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
+from rembg import remove
 
 class PlantDiseaseClassifier:
     def __init__(self, model_path, device='cpu'):
@@ -18,16 +19,31 @@ class PlantDiseaseClassifier:
         self.transform = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                               std=[0.229, 0.224, 0.225])
+            transforms.Normalize(mean=[0.502275, 0.528588, 0.474627],
+                               std=[0.251866, 0.251658, 0.335502])
         ])
         
         # Load model (TorchScript)
         self.model = torch.jit.load(model_path, map_location=device)
         self.model.eval()
+
+    @staticmethod
+    def _segment_image(image: Image.Image) -> Image.Image:
+        image = image.convert('RGB')
+        try:
+            segmented = remove(image)
+            if segmented.mode != 'RGBA':
+                return segmented.convert('RGB')
+
+            canvas = Image.new('RGB', segmented.size, (0, 0, 0))
+            canvas.paste(segmented, mask=segmented.getchannel('A'))
+            return canvas
+        except Exception:
+            return image
     
     def predict(self, image_path):
         img = Image.open(image_path).convert('RGB')
+        img = self._segment_image(img)
         img_tensor = self.transform(img).unsqueeze(0).to(self.device)
         
         with torch.no_grad():

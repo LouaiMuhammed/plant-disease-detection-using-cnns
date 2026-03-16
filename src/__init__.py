@@ -17,7 +17,8 @@ from .train import (
 from .transforms import (
     get_light_transform,
     get_strong_transform,
-    get_val_transform
+    get_val_transform,
+    get_train_transform
 )
 from .utils import (
     load_datasets,
@@ -46,6 +47,7 @@ __all__ = [
     'get_light_transform',
     'get_strong_transform',
     'get_val_transform',
+    'get_train_transform',
     'load_datasets',
     'get_class_distribution',
     'identify_rare_classes',

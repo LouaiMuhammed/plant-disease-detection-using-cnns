@@ -15,7 +15,7 @@ from .config import (
     OVERSAMPLING_MIN_MULTIPLIER, OVERSAMPLING_MAX_MULTIPLIER,
     OVERSAMPLING_EPOCH_MULTIPLIER
 )
-from .transforms import get_light_transform, get_strong_transform, get_val_transform
+from .transforms import get_light_transform, get_strong_transform, get_val_transform, get_train_transform
 from .datasets import ClassAwareDataset
 
 
@@ -123,16 +123,17 @@ def prepare_datasets(train_dataset_base, val_dataset_base, rare_classes):
     Returns:
         Transformed train and validation datasets
     """
-    # Get transforms
-    light_transform = get_light_transform()
+    # Training augmentation can be unified through get_train_transform().
+    # Validation must stay deterministic so metrics remain comparable.
+    train_transform = get_train_transform()
     strong_transform = get_strong_transform()
     val_transform = get_val_transform()
-    
+
     # Create class-aware training dataset
     train_dataset = ClassAwareDataset(
         train_dataset_base,
         rare_classes,
-        light_transform,
+        train_transform,
         strong_transform
     )
     

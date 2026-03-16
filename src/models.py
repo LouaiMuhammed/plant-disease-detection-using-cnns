@@ -66,8 +66,8 @@ def get_mobilenet_model(num_classes, version='v2', pretrained=True, dropout=0.5)
             param.requires_grad = True
 
         # Unfreeze last 2 feature blocks (for stronger fine-tuning)
-        #for param in model.features[-2:].parameters():
-        #    param.requires_grad = True
+        for param in model.features[-4:].parameters():
+            param.requires_grad = True
 
             
     elif version == 'v3_small':
