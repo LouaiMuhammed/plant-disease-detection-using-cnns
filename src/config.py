@@ -57,3 +57,11 @@ DATASET_STD  = [0.229, 0.224, 0.225]
 # Backward-compatible aliases used by older notebook/code cells.
 IMAGENET_MEAN = DATASET_MEAN
 IMAGENET_STD = DATASET_STD
+
+
+HARD_TRAIN_DIR = "../data/hard/train"
+HARD_VAL_DIR   = "../data/hard/val"
+
+FINETUNE_CANDIDATES = [
+    "../models/MobileNet_segmented_data.pth",
+]

@@ -208,3 +208,25 @@ def print_directory_counts(train_dir, val_dir, classes):
         class_path = os.path.join(val_dir, class_name)
         count = len(os.listdir(class_path)) if os.path.isdir(class_path) else 0
         print(f"{class_name:35} : {count:5d}")
+
+def load_checkpoint(checkpoint_path, device):
+    """Load model and classes from a checkpoint file"""
+    ckpt = torch.load(checkpoint_path, map_location=device)
+    
+    if isinstance(ckpt, dict) and 'idx_to_class' in ckpt:
+        classes = list(ckpt['idx_to_class'])
+    elif isinstance(ckpt, dict) and 'class_to_idx' in ckpt:
+        inv = {v: k for k, v in ckpt['class_to_idx'].items()}
+        classes = [inv[i] for i in range(len(inv))]
+    else:
+        raise RuntimeError('Checkpoint missing class mapping')
+    
+    return ckpt, classes
+
+
+def resolve_checkpoint(candidates):
+    """Return first existing checkpoint from a list of paths"""
+    for p in candidates:
+        if Path(p).exists():
+            return Path(p)
+    raise FileNotFoundError(f'No checkpoint found in: {candidates}')
