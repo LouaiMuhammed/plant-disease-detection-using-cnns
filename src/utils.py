@@ -7,6 +7,8 @@ import torch
 from collections import Counter
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from torchvision.datasets import ImageFolder
+from pathlib import Path
+
 
 from .config import (
     TRAIN_DIR, VAL_DIR, BATCH_SIZE, RARE_THRESHOLD,
@@ -15,7 +17,7 @@ from .config import (
     OVERSAMPLING_MIN_MULTIPLIER, OVERSAMPLING_MAX_MULTIPLIER,
     OVERSAMPLING_EPOCH_MULTIPLIER
 )
-from .transforms import get_light_transform, get_strong_transform, get_val_transform
+from .transforms import get_light_transform, get_strong_transform, get_val_transform, get_train_transform
 from .datasets import ClassAwareDataset
 
 
@@ -123,16 +125,17 @@ def prepare_datasets(train_dataset_base, val_dataset_base, rare_classes):
     Returns:
         Transformed train and validation datasets
     """
-    # Get transforms
-    light_transform = get_light_transform()
+    # Training augmentation can be unified through get_train_transform().
+    # Validation must stay deterministic so metrics remain comparable.
+    train_transform = get_train_transform()
     strong_transform = get_strong_transform()
     val_transform = get_val_transform()
-    
+
     # Create class-aware training dataset
     train_dataset = ClassAwareDataset(
         train_dataset_base,
         rare_classes,
-        light_transform,
+        train_transform,
         strong_transform
     )
     
@@ -207,3 +210,25 @@ def print_directory_counts(train_dir, val_dir, classes):
         class_path = os.path.join(val_dir, class_name)
         count = len(os.listdir(class_path)) if os.path.isdir(class_path) else 0
         print(f"{class_name:35} : {count:5d}")
+
+def load_checkpoint(checkpoint_path, device):
+    """Load model and classes from a checkpoint file"""
+    ckpt = torch.load(checkpoint_path, map_location=device)
+    
+    if isinstance(ckpt, dict) and 'idx_to_class' in ckpt:
+        classes = list(ckpt['idx_to_class'])
+    elif isinstance(ckpt, dict) and 'class_to_idx' in ckpt:
+        inv = {v: k for k, v in ckpt['class_to_idx'].items()}
+        classes = [inv[i] for i in range(len(inv))]
+    else:
+        raise RuntimeError('Checkpoint missing class mapping')
+    
+    return ckpt, classes
+
+
+def resolve_checkpoint(candidates):
+    """Return first existing checkpoint from a list of paths"""
+    for p in candidates:
+        if Path(p).exists():
+            return Path(p)
+    raise FileNotFoundError(f'No checkpoint found in: {candidates}')

@@ -2,104 +2,120 @@
 REST API for Plant Disease Classification
 Run: uvicorn api:app --host 0.0.0.0 --port 8000
 """
-
+import io
+import json
+import sys
+from pathlib import Path
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import torch
 import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
-import io
+from rembg import remove
 
-# Initialize FastAPI
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from src.models import get_mobilenet_model
+
 app = FastAPI(title="Plant Disease API", version="1.0")
 
-# Enable CORS (so Flutter can connect)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Disease classes
-CLASSES = [
-    'citrus_black_spot', 'citrus_canker', 'citrus_foliage_damage',
-    'citrus_greening', 'citrus_healthy', 'citrus_mealybugs', 'citrus_melanose',
-    'mango_anthracnose', 'mango_bacterial_canker', 'mango_cutting_weevil',
-    'mango_die_back', 'mango_gall_midge', 'mango_healthy',
-    'mango_powdery_mildew', 'mango_sooty_mould'
-]
+DEVICE = torch.device('cpu')
+CHECKPOINT_PATH = ROOT_DIR / 'models' / 'MobileNet_segmented_data.pth'
+TREATMENTS_PATH = ROOT_DIR / 'assets' / 'treatments.json'
 
-# Preprocessing
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    ),
 ])
 
-# Load model once at startup
-print("Loading model...")
-model = torch.jit.load('models/mobilenet_v2_plant_disease.pt', map_location='cpu')
-model.eval()
-print("✓ Model loaded and ready")
+with TREATMENTS_PATH.open('r', encoding='utf-8') as f:
+    TREATMENTS = json.load(f)
 
 
-@app.get("/")
+def _load_model_and_classes():
+    if not CHECKPOINT_PATH.exists():
+        raise FileNotFoundError(f'Checkpoint not found: {CHECKPOINT_PATH}')
+
+    ckpt = torch.load(CHECKPOINT_PATH, map_location=DEVICE)
+    if 'idx_to_class' in ckpt:
+        classes = ckpt['idx_to_class']
+    elif 'class_to_idx' in ckpt:
+        inv = {v: k for k, v in ckpt['class_to_idx'].items()}
+        classes = [inv[i] for i in range(len(inv))]
+    else:
+        raise RuntimeError('Checkpoint missing class mapping')
+
+    model = get_mobilenet_model(len(classes), version='v2', dropout=0.2).to(DEVICE)
+    state = ckpt['model_state'] if 'model_state' in ckpt else ckpt
+    model.load_state_dict(state)
+    model.eval()
+    return model, classes
+
+
+def _segment(image: Image.Image) -> Image.Image:
+    try:
+        segmented = remove(image.convert('RGB'))
+        canvas = Image.new('RGB', segmented.size, (0, 0, 0))
+        canvas.paste(segmented, mask=segmented.getchannel('A'))
+        return canvas
+    except Exception:
+        return image
+
+
+def _display_name(name: str) -> str:
+    return name.replace('_', ' ').title()
+
+
+print('Loading model...')
+MODEL, CLASSES = _load_model_and_classes()
+print(f'Ready — {len(CLASSES)} classes from {CHECKPOINT_PATH.name}')
+
+
+@app.get('/')
 def home():
-    """Health check endpoint"""
-    return {
-        "status": "online",
-        "model": "loaded",
-        "version": "1.0"
-    }
+    return {'status': 'online', 'classes': len(CLASSES)}
 
 
-@app.post("/predict")
+@app.post('/predict')
 async def predict(file: UploadFile = File(...)):
-    """
-    Predict disease from uploaded image
-    
-    Usage:
-        curl -X POST -F "file=@leaf.jpg" http://localhost:8000/predict
-    
-    Returns:
-        {
-            "predicted_class": "class_A",
-            "confidence": 0.985
-        }
-    """
-    # Read uploaded file
     contents = await file.read()
     img = Image.open(io.BytesIO(contents)).convert('RGB')
-    
-    # Preprocess
-    img_tensor = transform(img).unsqueeze(0)
-    
-    # Predict
+    img = _segment(img)
+    img_tensor = transform(img).unsqueeze(0).to(DEVICE)
+
     with torch.no_grad():
-        output = model(img_tensor)
-        probs = F.softmax(output, dim=1).squeeze()
-    
-    # Get top prediction
-    conf, idx = torch.max(probs, dim=0)
-    
+        probs = F.softmax(MODEL(img_tensor), dim=1).squeeze(0)
+
+    conf, idx = float(probs.max()), int(probs.argmax())
+    pred_class = CLASSES[idx]
+
     return {
-        "predicted_class": CLASSES[idx.item()],
-        "confidence": round(float(conf.item()), 2),
+        'predicted_class': _display_name(pred_class),
+        'confidence': round(conf, 4),
+        'treatment': TREATMENTS.get(pred_class, 'No treatment available.'),
     }
 
 
-@app.get("/classes")
+@app.get('/classes')
 def get_classes():
-    """Get list of all disease classes"""
-    return {
-        "classes": CLASSES,
-        "total": len(CLASSES)
-    }
+    return {'classes': CLASSES, 'total': len(CLASSES)}
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host='0.0.0.0', port=8000)

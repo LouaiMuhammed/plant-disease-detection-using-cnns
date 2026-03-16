@@ -47,3 +47,28 @@ class ClassAwareDataset(Dataset):
             img = self.light_transform(img)
         
         return img, label
+    
+class RemappedImageFolder(Dataset):
+    def __init__(self, imagefolder, expected_class_to_idx, filtered_samples=None):
+        self.imagefolder = imagefolder
+        self.transform = imagefolder.transform
+        self.loader = imagefolder.loader
+        self.classes = list(expected_class_to_idx.keys())
+        self.class_to_idx = dict(expected_class_to_idx)
+        source_samples = filtered_samples if filtered_samples is not None else imagefolder.samples
+        self.samples = []
+        for path, label in source_samples:
+            class_name = imagefolder.classes[label]
+            if class_name not in expected_class_to_idx:
+                raise ValueError(f'Unknown class {class_name}')
+            self.samples.append((path, expected_class_to_idx[class_name]))
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, idx):
+        path, label = self.samples[idx]
+        img = self.loader(path)
+        if self.transform is not None:
+            img = self.transform(img)
+        return img, label

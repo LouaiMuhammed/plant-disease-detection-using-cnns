@@ -33,7 +33,7 @@ def get_resnet_model(num_classes):
     return model
 
 
-def get_mobilenet_model(num_classes, version='v2', pretrained=True, dropout=0.2):
+def get_mobilenet_model(num_classes, version='v2', pretrained=True, dropout=0.5):
     """
     Get MobileNet model with pretrained weights
     
@@ -49,21 +49,26 @@ def get_mobilenet_model(num_classes, version='v2', pretrained=True, dropout=0.2)
     if version == 'v2':
         weights = "IMAGENET1K_V1" if pretrained else None
         model = models.mobilenet_v2(weights=weights)
-        
-        # Freeze all parameters
+
+        # Freeze everything first
         for param in model.parameters():
             param.requires_grad = False
-        
-        # Unfreeze classifier
-        for param in model.classifier.parameters():
-            param.requires_grad = True
-        
-        # Replace classifier
+
+        # Replace classifier head
         in_features = model.classifier[1].in_features
         model.classifier = nn.Sequential(
             nn.Dropout(p=dropout),
             nn.Linear(in_features, num_classes)
         )
+
+        # Unfreeze head
+        for param in model.classifier.parameters():
+            param.requires_grad = True
+
+        # Unfreeze last 2 feature blocks (for stronger fine-tuning)
+        for param in model.features[-4:].parameters():
+            param.requires_grad = True
+
             
     elif version == 'v3_small':
         weights = "IMAGENET1K_V1" if pretrained else None

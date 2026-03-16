@@ -29,6 +29,11 @@ LEARNING_RATE_BACKBONE = 1e-4
 MOBILENET_NUM_EPOCHS = 10
 MOBILENET_LR_HEAD = 1e-3
 MOBILENET_LR_BACKBONE = 1e-4
+MOBILENET_SGD_LR = 1e-2
+MOBILENET_SGD_MOMENTUM = 0.9
+MOBILENET_SGD_WEIGHT_DECAY = 1e-4
+MOBILENET_PLATEAU_FACTOR = 0.1
+MOBILENET_PLATEAU_PATIENCE = 3
 
 # Early stopping settings
 EARLY_STOPPING_PATIENCE = 5
@@ -45,6 +50,18 @@ NUM_WORKERS_TRAIN = 0
 NUM_WORKERS_VAL = 4
 PIN_MEMORY = True
 
-# Image normalization (ImageNet statistics)
-IMAGENET_MEAN = [0.485, 0.456, 0.406]
-IMAGENET_STD = [0.229, 0.224, 0.225]
+# Image normalization
+DATASET_MEAN = [0.485, 0.456, 0.406]
+DATASET_STD  = [0.229, 0.224, 0.225]
+
+# Backward-compatible aliases used by older notebook/code cells.
+IMAGENET_MEAN = DATASET_MEAN
+IMAGENET_STD = DATASET_STD
+
+
+HARD_TRAIN_DIR = "../data/hard/train"
+HARD_VAL_DIR   = "../data/hard/val"
+
+FINETUNE_CANDIDATES = [
+    "../models/MobileNet_segmented_data.pth",
+]
