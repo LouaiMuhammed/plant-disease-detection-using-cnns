@@ -85,12 +85,6 @@ smmap==5.0.2
 stack-data==0.6.3
 streamlit==1.52.2
 tenacity==9.1.2
-tensorboard==2.20.0
-tensorboard-data-server==0.7.2
-tensorflow==2.20.0
-tensorflow-datasets==4.9.9
-tensorflow-examples @ git+https://github.com/tensorflow/examples.git@b5a8265e0b655001eaa859e7bd8ac9b4e03f3ce8
-tensorflow-metadata==1.17.2
 termcolor==3.2.0
 toml==0.10.2
 tornado==6.5.3
