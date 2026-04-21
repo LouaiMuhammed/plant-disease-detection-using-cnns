@@ -104,3 +104,4 @@ wcwidth==0.2.14
 Werkzeug==3.1.4
 wrapt==2.0.1
 zipp==3.23.0
+fastapi==0.129.0
