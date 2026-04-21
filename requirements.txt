@@ -106,3 +106,4 @@ wrapt==2.0.1
 zipp==3.23.0
 fastapi==0.129.0
 uvicorn==0.40.0
+torch==2.9.1
