@@ -2,7 +2,6 @@ fsspec==2025.12.0
 gast==0.7.0
 gitdb==4.0.12
 GitPython==3.1.45
-
 grpcio==1.76.0
 h5py==3.15.1
 idna==3.11
@@ -51,7 +50,6 @@ rpds-py==0.30.0
 simple-parsing==0.1.7
 six==1.17.0
 smmap==5.0.2
-stack-data==0.6.
 fastapi==0.129.0
 uvicorn==0.40.0
 torch==2.9.1
