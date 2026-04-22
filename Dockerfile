@@ -20,6 +20,8 @@ COPY requirements.deploy.txt ./requirements.deploy.txt
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.deploy.txt
 
+RUN mkdir -p /app/assets /app/deployment/models
+
 COPY deployment/api.py ./api.py
 COPY src ./src
 COPY assets/treatments.json ./assets/treatments.json
@@ -28,3 +30,5 @@ COPY deployment/models/mobilenet_v2_plant_disease_segmented.pt ./deployment/mode
 COPY deployment/models/model_metadata.json ./deployment/models/model_metadata.json
 
 EXPOSE 8000
+
+CMD ["sh", "-c", "uvicorn api:app --host 0.0.0.0 --port ${PORT:-8000}"]
