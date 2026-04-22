@@ -28,4 +28,3 @@ COPY deployment/models/mobilenet_v2_plant_disease_segmented.pt ./deployment/mode
 COPY deployment/models/model_metadata.json ./deployment/models/model_metadata.json
 
 EXPOSE 8000
-
