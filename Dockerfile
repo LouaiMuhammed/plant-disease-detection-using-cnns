@@ -15,17 +15,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libxrender1 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.deploy.txt ./requirements.deploy.txt
+COPY requirements.txt ./requirements.txt
 
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.deploy.txt
+    pip install --no-cache-dir -r requirements.txt
 
 COPY deployment/api.py ./api.py
 COPY src ./src
-COPY assets/treatments.json ./assets/treatments.json
-COPY assets/diseases_description.json ./assets/diseases_description.json
-COPY deployment/models/mobilenet_v2_plant_disease_segmented.pt ./deployment/models/mobilenet_v2_plant_disease_segmented.pt
-COPY deployment/models/model_metadata.json ./deployment/models/model_metadata.json
+COPY deployment/models ./deployment/models
 
 EXPOSE 8000
 
