@@ -1,0 +1,17 @@
+{
+  "citrus_black_spot": "Prune for airflow, clear fallen fruit, and apply copper or strobilurin fungicides from petal fall through summer.",
+  "citrus_canker": "Prune infected wood, disinfect tools with 70% alcohol, and apply copper bactericides. Remove tree if infection is systemic.",
+  "citrus_foliage_damage": "Apply horticultural oil or soap for pests. Improve nutrition/irrigation. Use copper fungicide if fungal spots appear.",
+  "citrus_greening": "No cure. If not miskaten for \"Nutrient Deficiency\", control psyllid vectors with Imidacloprid (avoid bloom). Remove infected trees to prevent spread; consult local agricultural extension for confirmation.",
+  "citrus_healthy": "No treatment required. Maintain regular watering and fertilization.",
+  "citrus_melanose": "Prune dead wood to remove inoculum. Apply copper fungicide during early fruit development (avoid heat over 32°C).",
+  "mango_anthracnose": "Remove infected debris. Spray copper fungicide or Mancozeb every 10-14 days during wet weather or flowering.",
+  "mango_bacterial_canker": "Prune infected limbs and disinfect tools. Apply copper-based bactericides to protect new growth.",
+  "mango_cutting_weevil": "Collect and burn infested shoots. Apply Spinosad or Imidacloprid only if infestation is severe and trees aren't blooming.",
+  "mango_die_back": "Prune 10cm below diseased wood. Disinfect tools between cuts. Apply copper fungicide or Carbendazim to wounds.",
+  "mango_gall_midge": "Prune and destroy infested leaves immediately. Use systemic insecticides like Imidacloprid during early flush.",
+  "mango_healthy": "No treatment required. Monitor for pests during new leaf flushes.",
+  "mango_powdery_mildew": "Remove infected panicles. Spray wettable sulfur or potassium bicarbonate every 7-10 days. Do not mix sulfur with oil.",
+  "mango_sooty_mould": "Treat underlying pests (aphids/scale) with neem oil. Wash leaves with mild soap to restore photosynthesis."
+  
+}

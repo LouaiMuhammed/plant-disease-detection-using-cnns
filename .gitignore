@@ -104,12 +104,14 @@ coverage.xml
 
 #
 data/
-assets/
+assets/outputs
 saved_models/
 data1/
 data2/
 notebook-test/
 models/
+postman/
+.postman/
 
 # Translations
 *.mo

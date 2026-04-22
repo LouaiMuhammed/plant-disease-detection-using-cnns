@@ -1,0 +1,17 @@
+{
+  "citrus_black_spot": "Fungal disease causing dark, sunken spots on fruit and leaves, reducing fruit quality.",
+  "citrus_canker": "Bacterial disease producing raised corky lesions on leaves, stems, and fruit with yellow halos.",
+  "citrus_foliage_damage": "General leaf injury from pests, nutrient deficiency, disease, or environmental stress.",
+  "citrus_greening": "Bacterial disease causing yellow shoots, misshapen bitter fruit, and gradual tree decline.",
+  "citrus_healthy": "Leaves and fruit show normal color, shape, and growth with no visible symptoms.",
+  "citrus_mealybugs": "Sap-sucking insects leaving white cotton-like clusters and causing leaf curling and weakening.",
+  "citrus_melanose": "Fungal disease causing small, rough, dark specks on leaves and fruit surface.",
+  "mango_anthracnose": "Fungal disease causing black lesions on leaves, flowers, and fruit, especially in humid weather.",
+  "mango_bacterial_canker": "Bacterial infection causing leaf spots, stem cracks, and oozing lesions on fruit.",
+  "mango_cutting_weevil": "Insect pest damaging young shoots and fruits by boring and feeding inside tissues.",
+  "mango_die_back": "Fungal condition where branch tips dry out and die, progressing backward along stems.",
+  "mango_gall_midge": "Tiny insect causing leaf curling, galls, and distorted new growth.",
+  "mango_healthy": "Leaves and fruit appear normal with no signs of pests or disease.",
+  "mango_powdery_mildew": "White powdery fungal growth on flowers and leaves leading to poor fruit set.",
+  "mango_sooty_mould": "Black fungal coating on leaves growing on honeydew secreted by sap-sucking insects."
+}
