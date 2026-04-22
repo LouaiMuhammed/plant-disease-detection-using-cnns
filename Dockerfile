@@ -15,23 +15,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libxrender1 \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
+COPY requirements.txt ./requirements.txt
 
-RUN pip install --no-cache-dir \
-        fastapi==0.129.0 \
-        uvicorn==0.40.0 \
-        pillow==12.0.0 \
-        python-multipart \
-        rembg==2.0.67 \
-        onnxruntime \
-        numpy && \
-    pip install --no-cache-dir \
-        torch==2.9.1 \
-        torchvision==0.24.1 \
-        --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY deployment/api.py ./api.py
+COPY src ./src
+COPY assets ./assets
+COPY deployment/models ./deployment/models
 
 EXPOSE 8000
 
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn api:app --host 0.0.0.0 --port ${PORT:-8000}"]
