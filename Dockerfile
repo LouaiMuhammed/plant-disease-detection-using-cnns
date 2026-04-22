@@ -22,7 +22,6 @@ RUN pip install --upgrade pip && \
 
 COPY deployment/api.py ./api.py
 COPY src ./src
-COPY assets ./assets
 COPY deployment/models ./deployment/models
 
 EXPOSE 8000
