@@ -11,8 +11,10 @@ RUN pip install --upgrade pip && \
         rembg==2.0.67 \
         fastapi==0.129.0 \
         uvicorn==0.40.0 \
-        pytorch-cpu \
-        pillow==12.0.0
+        pillow==12.0.0 && \
+    pip install \
+        torch==2.9.1 \
+        --index-url https://download.pytorch.org/whl/cpu
 
 COPY . .
 
