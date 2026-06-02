@@ -133,7 +133,7 @@ Rare classes are protected from collapse while avoiding unrealistic synthetic da
 * **Validation accuracy:** `0.9882`
 * **Classes:** 14
 * **Model version:** 3.0
-* **Training date:** 2026-06-06
+* **Training date:** 2026-06-02
 
 Strong performance is maintained across both majority and minority classes, though some rare classes remain more difficult than the dominant classes.
 
@@ -225,7 +225,7 @@ plant-disease-detection-using-cnns/
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
+git clone <url>
 cd plant-disease-detection-using-cnns
 ```
 
@@ -361,7 +361,7 @@ The repository includes deployable artifacts in `models/` and `deployment/models
 Example usage:
 
 ```python
-classifier = PlantDiseaseClassifier(r"models/mobilenet_v2_plant_disease.pt")
+classifier = PlantDiseaseClassifier(r"model.pt")
 result = classifier.predict(r"path_to_image.jpg")
 print(result)
 ```
