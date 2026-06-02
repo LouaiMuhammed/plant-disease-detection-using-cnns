@@ -1,0 +1,420 @@
+{
+  "citrus_black_spot": {
+    "description": "Fungal disease caused by Phyllosticta citricarpa. Thrives in warm, wet conditions.",
+    "weather_triggers": {
+      "high_humidity": {
+        "threshold": "> 80% RH",
+        "risk_level": "high",
+        "duration_hours": 12,
+        "description": "Spore germination accelerates above 80% humidity. Wet leaves critical for infection.",
+        "action": "Ensure canopy airflow. Remove wet debris. If fungicide not recently applied, apply copper or strobilurin before rain."
+      },
+      "rainfall": {
+        "threshold": "> 5mm rain",
+        "risk_level": "high",
+        "duration_hours": 24,
+        "description": "Rain provides moisture for spore germination. Lesion development occurs 7-10 days post-infection.",
+        "action": "Apply fungicide preventatively before rain if humidity is high. Prune for better air circulation."
+      },
+      "temperature": {
+        "optimal_range": "22-28°C",
+        "risk_level": "moderate",
+        "description": "Disease develops slower below 20°C. Accelerates in warm seasons (summer).",
+        "action": "Monitor closely during warm months. Increase fungicide frequency May-September."
+      },
+      "leaf_wetness": {
+        "threshold": "> 12 hours continuous",
+        "risk_level": "high",
+        "description": "Spores need 12+ hours of leaf wetness to infect. Morning dew or overhead irrigation increases risk.",
+        "action": "Avoid overhead watering. Water at soil level early morning only. Remove standing water."
+      }
+    },
+    "critical_period": "Spring through summer (petal fall through harvest)",
+    "monitoring_frequency": "Weekly during wet season"
+  },
+
+  "citrus_canker": {
+    "description": "Bacterial disease (Xanthomonas citri subsp. citri). Spread by water splash and wind.",
+    "weather_triggers": {
+      "high_humidity": {
+        "threshold": "> 75% RH",
+        "risk_level": "moderate",
+        "duration_hours": 8,
+        "description": "Humidity aids bacterial survival on leaf surfaces. Wind-blown water splash spreads bacteria.",
+        "action": "Avoid overhead watering. Prune infected wood immediately. Disinfect tools."
+      },
+      "rainfall": {
+        "threshold": "> 2mm rain with wind",
+        "risk_level": "high",
+        "duration_hours": 6,
+        "description": "Rain + wind creates water droplets that spread bacteria to healthy tissue. High-speed winds increase spread.",
+        "action": "After rain, inspect for new lesions. If infection detected, prune affected branches immediately."
+      },
+      "temperature": {
+        "optimal_range": "20-30°C",
+        "risk_level": "moderate",
+        "description": "Bacterial growth and lesion expansion fastest at warm temperatures.",
+        "action": "Monitor closely year-round but especially April-October. Apply copper bactericide preventatively."
+      },
+      "wind_speed": {
+        "threshold": "> 25 km/h during rain",
+        "risk_level": "high",
+        "description": "Strong winds + rain create forceful water splash that disperses bacteria between trees.",
+        "action": "Post-storm inspection critical. Increase spacing between trees. Remove infected trees if systemic."
+      }
+    },
+    "critical_period": "Year-round, peaks in warm wet seasons",
+    "monitoring_frequency": "Every 3-5 days after rain events"
+  },
+
+  "citrus_foliage_damage": {
+    "description": "Non-infectious leaf damage from pests (mites, leaf miners, scale) or fungal spotting.",
+    "weather_triggers": {
+      "high_temperature": {
+        "threshold": "> 32°C",
+        "risk_level": "moderate",
+        "description": "Heat stress weakens plant defenses. Spider mites and scale insects reproduce faster in heat.",
+        "action": "Increase irrigation to reduce stress. Apply horticultural oil in early morning or late evening (avoid heat)."
+      },
+      "low_humidity": {
+        "threshold": "< 40% RH",
+        "risk_level": "moderate",
+        "description": "Dry conditions stress foliage, making it more susceptible to pest damage.",
+        "action": "Maintain consistent soil moisture. Increase misting frequency. Monitor for spider mites."
+      },
+      "high_humidity": {
+        "threshold": "> 80% RH",
+        "risk_level": "moderate",
+        "description": "High humidity + warm temps = fungal leaf spots (Cercospora, etc.). Also favors scale insects.",
+        "action": "Improve canopy airflow. Avoid wetting foliage. Apply copper fungicide if fungal spots appear."
+      },
+      "prolonged_drought": {
+        "threshold": "> 7 days without rain/irrigation",
+        "risk_level": "moderate",
+        "description": "Stress from drought reduces plant vigor and pest resistance.",
+        "action": "Restore regular watering schedule. Improve soil moisture and nutrition."
+      }
+    },
+    "critical_period": "Spring-summer during pest season",
+    "monitoring_frequency": "Weekly, especially during pest peaks"
+  },
+
+  "citrus_greening": {
+    "description": "Bacterial disease (Candidatus Liberibacter) spread by Asian citrus psyllid vector. Incurable.",
+    "weather_triggers": {
+      "warm_temperature": {
+        "threshold": "18-30°C optimal for vector",
+        "risk_level": "high",
+        "description": "Psyllid vector most active and reproduces fastest in warm weather (spring-fall).",
+        "action": "Monitor for psyllids year-round, intensify April-November. Use Imidacloprid during non-bloom periods."
+      },
+      "high_humidity": {
+        "threshold": "> 70% RH",
+        "risk_level": "moderate",
+        "description": "High humidity favors psyllid nymphs. Adults more active in warm + humid conditions.",
+        "action": "Scout for psyllids on new leaf flushes. Apply systemic insecticide if psyllids detected."
+      },
+      "new_flush_growth": {
+        "trigger": "New leaves appearing after rain or fertilizer",
+        "risk_level": "high",
+        "description": "Psyllids preferentially feed on new tender growth. Each new flush = feeding opportunity.",
+        "action": "Time Imidacloprid sprays to protect new flushes. Avoid spraying during bloom."
+      },
+      "rainfall": {
+        "threshold": "> 10mm rain",
+        "risk_level": "moderate",
+        "duration_hours": 48,
+        "description": "Rain stimulates new flush growth, which attracts psyllids.",
+        "action": "Within 2-3 days of rain triggering new growth, apply systemic insecticide if not blooming."
+      }
+    },
+    "critical_period": "April-November (warm season psyllid activity)",
+    "monitoring_frequency": "Every 3-4 days during warm months. Check new growth for psyllids.",
+    "note": "No cure exists. Prevention through psyllid control is only option. Confirm diagnosis with agricultural extension before removing tree."
+  },
+
+  "citrus_healthy": {
+    "description": "Healthy foliage and fruit. No disease present.",
+    "weather_triggers": null,
+    "critical_period": "N/A",
+    "monitoring_frequency": "Monthly routine check"
+  },
+
+  "citrus_melanose": {
+    "description": "Fungal disease (Diaporthe citri). Infects dead wood and spreads to fruit/leaves via splash.",
+    "weather_triggers": {
+      "rainfall": {
+        "threshold": "> 5mm rain",
+        "risk_level": "moderate",
+        "duration_hours": 24,
+        "description": "Rain creates spore-laden water splash from infected dead wood to healthy fruit/leaves.",
+        "action": "Prune dead wood before rainy season. If disease present, apply copper fungicide during fruit development."
+      },
+      "temperature": {
+        "optimal_range": "18-28°C",
+        "risk_level": "moderate",
+        "description": "Disease development fastest during early fruit development phase (spring into early summer).",
+        "action": "Prune dead wood in late winter. Apply fungicide March-June during early fruit development."
+      },
+      "high_temperature": {
+        "threshold": "> 32°C",
+        "risk_level": "low",
+        "description": "Copper fungicides lose efficacy above 32°C. Application timing critical.",
+        "action": "Apply copper fungicide early morning or late evening when temps below 32°C."
+      },
+      "humidity": {
+        "threshold": "> 70% RH",
+        "risk_level": "moderate",
+        "duration_hours": 12,
+        "description": "Spore germination accelerates in humid conditions.",
+        "action": "Ensure canopy airflow. Remove dead wood which harbors spores."
+      }
+    },
+    "critical_period": "March-June (fruit development phase)",
+    "monitoring_frequency": "Every 2 weeks March-June. Inspect fruit and foliage."
+  },
+
+  "mango_anthracnose": {
+    "description": "Fungal disease (Colletotrichum gloeosporioides). Thrives in warm, wet conditions.",
+    "weather_triggers": {
+      "rainfall": {
+        "threshold": "> 5mm rain",
+        "risk_level": "high",
+        "duration_hours": 24,
+        "description": "Spores splash-dispersed during rain. Infection occurs within 12-24 hours of rain on young fruit/flowers.",
+        "action": "Remove infected debris immediately. Spray Mancozeb or copper every 10-14 days during wet weather."
+      },
+      "high_humidity": {
+        "threshold": "> 85% RH",
+        "risk_level": "high",
+        "duration_hours": 12,
+        "description": "Disease accelerates in humid conditions. Conidiospores germinate rapidly above 85% RH.",
+        "action": "Improve canopy airflow. Avoid overhead watering. Apply fungicide preventatively before wet season."
+      },
+      "warm_temperature": {
+        "optimal_range": "24-28°C",
+        "risk_level": "high",
+        "description": "Fungus grows fastest at 24-28°C. Infection occurs faster at warm temps.",
+        "action": "Monitor closely during warm wet months. Increase fungicide frequency May-September."
+      },
+      "flowering_period": {
+        "trigger": "Flowers appearing",
+        "risk_level": "high",
+        "description": "Flowers and young fruitlets are highly susceptible. Infection during bloom stage causes fruit drop.",
+        "action": "Start fungicide spray program at flower bud stage. Maintain 10-14 day intervals through fruit set."
+      }
+    },
+    "critical_period": "Flowering through fruit development (March-June in most regions)",
+    "monitoring_frequency": "Every 5-7 days during flowering and wet season"
+  },
+
+  "mango_bacterial_canker": {
+    "description": "Bacterial disease (Xanthomonas campestris pv. mangiferaeindicae). Spread by water and tools.",
+    "weather_triggers": {
+      "rainfall": {
+        "threshold": "> 2mm rain",
+        "risk_level": "high",
+        "duration_hours": 6,
+        "description": "Rain with wind spreads bacteria via water splash. Infection occurs through wounds or stomata.",
+        "action": "Avoid overhead watering. Prune infected branches immediately after rain."
+      },
+      "high_humidity": {
+        "threshold": "> 80% RH",
+        "risk_level": "moderate",
+        "duration_hours": 8,
+        "description": "High humidity aids bacterial survival. Stomatal opening increases during humid conditions.",
+        "action": "Improve air circulation. Disinfect pruning tools with 70% alcohol between cuts."
+      },
+      "temperature": {
+        "optimal_range": "25-30°C",
+        "risk_level": "high",
+        "description": "Bacteria most active in warm weather. Lesion expansion fastest at 25-30°C.",
+        "action": "Monitor closely year-round but especially warm months. Apply copper bactericide to new growth."
+      },
+      "wind_damage": {
+        "threshold": "Strong winds with rain",
+        "risk_level": "high",
+        "description": "Wind-driven rain creates wounds where bacteria enter. Branch breakage from wind = infection pathway.",
+        "action": "After storms, inspect for broken branches. Prune infected wood immediately. Apply bactericide to wounds."
+      }
+    },
+    "critical_period": "Year-round, peaks during warm wet season",
+    "monitoring_frequency": "Every 5-7 days after rain events"
+  },
+
+  "mango_cutting_weevil": {
+    "description": "Insect pest (Sternochetus weakly). Larvae tunnel in shoots, causing wilting and dieback.",
+    "weather_triggers": {
+      "warm_temperature": {
+        "threshold": "> 20°C",
+        "risk_level": "moderate",
+        "description": "Adult weevil activity and reproduction increases above 20°C.",
+        "action": "Monitor new shoots from spring onward. Collect and burn infested shoots."
+      },
+      "rainfall": {
+        "threshold": "> 10mm rain",
+        "risk_level": "moderate",
+        "duration_hours": 48,
+        "description": "Rain triggers new shoot growth, which attracts laying females.",
+        "action": "Scout for new shoot damage 1-2 weeks after rain. Remove infested shoots immediately."
+      },
+      "new_flush_growth": {
+        "trigger": "New leaves/shoots appearing",
+        "risk_level": "high",
+        "description": "Females lay eggs on tender new growth. Larvae burrow into shoots causing wilting.",
+        "action": "Check new shoots weekly during growing season. Prune infested shoots 10cm below damage."
+      },
+      "moderate_humidity": {
+        "threshold": "50-70% RH",
+        "risk_level": "moderate",
+        "description": "Pest activity optimal in moderate humidity during warm season.",
+        "action": "Monitor shoots weekly spring-summer. Use Spinosad only if severe and not blooming."
+      }
+    },
+    "critical_period": "Spring-summer during new shoot development",
+    "monitoring_frequency": "Every 7-10 days during active growth",
+    "note": "Only apply insecticide if infestation is severe and trees not in bloom."
+  },
+
+  "mango_die_back": {
+    "description": "Fungal disease (Lasiodiplodia or Botryodiplodia). Infects branch ends and spreads downward.",
+    "weather_triggers": {
+      "drought_stress": {
+        "threshold": "> 14 days without rain/irrigation",
+        "risk_level": "high",
+        "description": "Drought weakens tree vigor. Fungus enters through branch tips and spreads when tree is stressed.",
+        "action": "Restore regular watering. Prune 10cm below diseased wood. Disinfect tools between cuts."
+      },
+      "high_temperature": {
+        "threshold": "> 32°C with low humidity",
+        "risk_level": "high",
+        "description": "Heat + drought stress = optimal conditions for dieback fungus to kill branch tips.",
+        "action": "Improve irrigation to reduce stress. Prune affected branches. Apply fungicide to wounds."
+      },
+      "rainfall": {
+        "threshold": "> 5mm rain after drought",
+        "risk_level": "moderate",
+        "duration_hours": 24,
+        "description": "Rain after drought stress can trigger disease expansion if branches already infected.",
+        "action": "Prune diseased branches before rainy season. Apply Carbendazim or copper to wounds."
+      },
+      "temperature_fluctuation": {
+        "trigger": "Cold nights (below 15°C) + warm days (above 28°C)",
+        "risk_level": "moderate",
+        "description": "Rapid temperature changes stress branches and allow fungal entry.",
+        "action": "Monitor for branch damage during temperature swings. Prune promptly if dieback detected."
+      }
+    },
+    "critical_period": "Dry season (drought risk) and temperature transition seasons",
+    "monitoring_frequency": "Every 2 weeks during dry season. Inspect branch ends."
+  },
+
+  "mango_gall_midge": {
+    "description": "Insect pest (Procontarinia mataniensis). Larvae cause leaf gall formation and stunting.",
+    "weather_triggers": {
+      "rainfall": {
+        "threshold": "> 10mm rain",
+        "risk_level": "high",
+        "duration_hours": 48,
+        "description": "Rain stimulates new leaf flush, which attracts egg-laying females. Peak midge activity post-rain.",
+        "action": "Scout new flushes 3-5 days after rain. Remove galled leaves immediately to prevent spread."
+      },
+      "warm_temperature": {
+        "optimal_range": "20-28°C",
+        "risk_level": "high",
+        "description": "Midge development, flight, and egg-laying fastest in warm weather (spring-summer).",
+        "action": "Monitor intensively April-September. Apply systemic insecticide during early flush stage."
+      },
+      "high_humidity": {
+        "threshold": "> 75% RH",
+        "risk_level": "moderate",
+        "duration_hours": 12,
+        "description": "Eggs and larvae thrive in humid microenvironments within galls.",
+        "action": "Improve canopy airflow. Remove infested leaves to disrupt midge life cycle."
+      },
+      "new_flush_growth": {
+        "trigger": "New leaves appearing",
+        "risk_level": "high",
+        "description": "Females lay eggs on tender new growth. Larvae create galls as leaves expand.",
+        "action": "Apply systemic insecticide (Imidacloprid) at early flush stage. Repeat in 2 weeks if needed."
+      }
+    },
+    "critical_period": "Spring through early summer (new flush periods)",
+    "monitoring_frequency": "Every 7 days during active growth",
+    "note": "Early detection and leaf removal critical. Systemic insecticide most effective."
+  },
+
+  "mango_healthy": {
+    "description": "Healthy mango foliage and fruit. No disease or pest pressure detected.",
+    "weather_triggers": null,
+    "critical_period": "N/A",
+    "monitoring_frequency": "Monthly routine check"
+  },
+
+  "mango_powdery_mildew": {
+    "description": "Fungal disease (Oidium mangiferae). Spreads via spores. Does not require free water.",
+    "weather_triggers": {
+      "warm_dry_climate": {
+        "threshold": "20-27°C, low humidity (40-60%)",
+        "risk_level": "high",
+        "description": "Powdery mildew UNIQUE: thrives in warm, DRY conditions (opposite of most fungi). Spores spread via air currents.",
+        "action": "Do NOT increase humidity. Remove infected panicles. Spray sulfur or potassium bicarbonate every 7-10 days."
+      },
+      "flowering_period": {
+        "trigger": "Panicles forming and blooming",
+        "risk_level": "high",
+        "description": "Panicles (flower clusters) highly susceptible. Infection reduces fruit set.",
+        "action": "Start fungicide spray at panicle emergence. Maintain 7-10 day intervals through bloom."
+      },
+      "light_rainfall": {
+        "threshold": "Drizzle or overhead watering",
+        "risk_level": "high",
+        "description": "Unlike most fungi, wetting can help sulfur fungicides adhere. But excessive water washes spores.",
+        "action": "Spray sulfur early morning when conditions are cool and dry. Do not spray sulfur with oil."
+      },
+      "high_temperature": {
+        "threshold": "> 30°C",
+        "risk_level": "low",
+        "description": "Disease slows above 30°C. Sulfur sprays less effective in extreme heat.",
+        "action": "Spray in early morning or late afternoon. Avoid midday heat."
+      }
+    },
+    "critical_period": "Flowering period (variable by region, typically 2-3 months)",
+    "monitoring_frequency": "Every 7-10 days during flowering",
+    "note": "Sulfur very effective but do NOT mix with oil. Potassium bicarbonate also works."
+  },
+
+  "mango_sooty_mould": {
+    "description": "Fungal disease (Capnodium/Scorias species). Secondary — grows on honeydew from pests (aphids, scale, whitefly).",
+    "weather_triggers": {
+      "high_humidity": {
+        "threshold": "> 80% RH",
+        "risk_level": "high",
+        "duration_hours": 12,
+        "description": "Sooty mould fungus thrives in humid conditions. Also favors pest survival (scale, aphids produce more honeydew).",
+        "action": "Treat underlying pests with neem oil. Improve canopy airflow to reduce humidity."
+      },
+      "rainfall": {
+        "threshold": "> 5mm rain",
+        "risk_level": "low",
+        "duration_hours": 24,
+        "description": "Rain can wash away sooty mould temporarily, but pests (aphids/scale) often increase post-rain.",
+        "action": "Scout for pests after rain. If pests found, apply neem oil. Wash leaves with mild soap."
+      },
+      "warm_temperature": {
+        "optimal_range": "22-28°C",
+        "risk_level": "moderate",
+        "description": "Pest activity (aphids/scale) highest in warm months. Sooty mould follows pest presence.",
+        "action": "Monitor for pests year-round, intensify April-October. Treat pests with neem oil preventatively."
+      },
+      "low_leaf_wetness": {
+        "description": "Sooty mould persists and accumulates on leaf surfaces. Does not require water to survive.",
+        "risk_level": "moderate",
+        "action": "Once pests controlled, wash leaves with mild soap to restore photosynthesis."
+      }
+    },
+    "critical_period": "Year-round whenever pests are active",
+    "monitoring_frequency": "Every 5-7 days during warm months. Scout for underlying pests.",
+    "note": "Sooty mould is symptom of pest infestation, not primary disease. Treat the pests (aphids/scale), not the mould directly."
+  }
+}
