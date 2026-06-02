@@ -18,7 +18,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.deploy.txt ./requirements.deploy.txt
 
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.deploy.txt
+    pip install --no-cache-dir -r requirements.deploy.txt && \
+    pip install --no-cache-dir \
+        --index-url https://download.pytorch.org/whl/cpu \
+        torch==2.9.1 \
+        torchvision==0.24.1
 
 RUN mkdir -p /app/assets /app/deployment/models
 
@@ -26,7 +30,7 @@ COPY deployment/api.py ./api.py
 COPY src ./src
 COPY assets/treatments.json ./assets/treatments.json
 COPY assets/diseases_description.json ./assets/diseases_description.json
-COPY deployment/models/mobilenet_v2_plant_disease_segmented.pt ./deployment/models/mobilenet_v2_plant_disease_segmented.pt
+COPY deployment/models/mobilenet_v2_plant_disease_segmented.onnx ./deployment/models/mobilenet_v2_plant_disease_segmented.onnx
 COPY deployment/models/model_metadata.json ./deployment/models/model_metadata.json
 
 EXPOSE 8000

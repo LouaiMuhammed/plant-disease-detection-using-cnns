@@ -1,6 +1,8 @@
+# & "C:\Users\loaim\Downloads\ngrok-v3-stable-windows-amd64\ngrok.exe" http 8000
+
 param(
     [int]$Port = 8000,
-    [string]$Host = "0.0.0.0",
+    [string]$BindHost = "0.0.0.0",
     [string]$ApiModule = "api:app",
     [string]$NgrokPath = "ngrok",
     [switch]$SkipNgrok
@@ -11,6 +13,36 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = Split-Path -Parent $scriptDir
 Set-Location $scriptDir
 
+function Resolve-NgrokCommand {
+    param([string]$RequestedPath)
+
+    $candidates = @()
+    if ($RequestedPath) {
+        $candidates += $RequestedPath
+    }
+
+    if ($env:ngrok) {
+        $candidates += $env:ngrok.Trim('"')
+    }
+
+    foreach ($candidate in $candidates) {
+        if (-not $candidate) {
+            continue
+        }
+
+        $cmd = Get-Command $candidate -ErrorAction SilentlyContinue
+        if ($cmd) {
+            return $cmd
+        }
+
+        if (Test-Path $candidate) {
+            return [pscustomobject]@{ Source = (Resolve-Path $candidate).Path }
+        }
+    }
+
+    return $null
+}
+
 $venvPython = Join-Path $repoRoot "plant-disease-detection-env\Scripts\python.exe"
 if (Test-Path $venvPython) {
     $pythonCmd = $venvPython
@@ -20,7 +52,7 @@ if (Test-Path $venvPython) {
 
 Write-Host "Starting FastAPI backend on port $Port..."
 $backend = Start-Process -FilePath $pythonCmd `
-    -ArgumentList "-m", "uvicorn", $ApiModule, "--host", $Host, "--port", $Port `
+    -ArgumentList "-m", "uvicorn", $ApiModule, "--host", $BindHost, "--port", $Port `
     -WorkingDirectory $scriptDir `
     -PassThru
 
@@ -39,9 +71,12 @@ if ($SkipNgrok) {
     return
 }
 
-$ngrokCmd = Get-Command $NgrokPath -ErrorAction SilentlyContinue
+$ngrokCmd = Resolve-NgrokCommand -RequestedPath $NgrokPath
 if (-not $ngrokCmd) {
     Write-Warning "ngrok not found. Backend is running locally on http://localhost:$Port"
+    if ($env:ngrok) {
+        Write-Warning "Tried env:ngrok=$($env:ngrok) as well, but it could not be resolved."
+    }
     try {
         while ($true) { Start-Sleep -Seconds 5 }
     } finally {

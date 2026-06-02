@@ -79,25 +79,11 @@ Instead of collapsing labels into plant-level categories, disease-level labels w
 
 ## Model Architecture
 
-Two main model families were explored:
 
-### Prototype
+### Classifying Model
 
-* **ResNet-18** pretrained on ImageNet
-* Used to experiment with augmentation and imbalance strategies
-
-### Current Primary Model Family
-
-* **MobileNetV2** pretrained on ImageNet
-* Lightweight and better suited for deployment
-* Fine-tuned classifier head and later feature blocks
-* Exported to TorchScript and ONNX
-
-Additional model variants now in the repo include:
-
-* Fine-tuned MobileNet checkpoints
-* Segmentation-focused MobileNet checkpoints
-* Crop-specific checkpoints for hierarchical experiments
+* **DenseNet121** pretrained on ImageNet
+* Fine-tuned classifier head and final convolutional block
 
 ---
 
@@ -141,7 +127,8 @@ Rare classes are protected from collapse while avoiding unrealistic synthetic da
 
 ## Results
 
-The latest exported metadata in `models/model_metadata.json` reports:
+**Validation accuracy:** ~98%
+**Macro F1:** ~0.94–0.96
 
 * **Validation accuracy:** `0.9725`
 * **Classes:** 14
@@ -206,35 +193,31 @@ plant-disease-detection-using-cnns/
 │   ├── transforms.py                       # Data augmentation
 │   └── utils.py                            # Helper functions
 │
-├── notebooks/                              # Jupyter notebooks
-│   ├── 01. data_exploration_and_prototype.ipynb # Prototype
-│   │
-│   ├── 02. mobilenet_model.ipynb   # Final model's development
-│   ├── 03. inference.ipynb         # Infering on real-world examples
-│   │
-│   ├── 04. image_segmentation.ipynb # Dataset segmentation & cleaning notebook
-│   │
-│   └── 05. hierarchical_classifier [EXPERIMENT].ipynb 
+├── notebooks/                               # Jupyter notebooks
+│   ├── 01. densetnet121_model.ipynb        # Model Development           
+│   └── 02. inference.ipynb        # Infernce Examples
+│   └── 03. image_segmentation.ipynb        # Segmentation Pipeline
 │
 ├── scripts/
 │   └── rebuild_clean_split.py              # Rebuilds train/val split and checks leakage
 │
 ├── deployment/                             # Deployment package
 │   ├── models/
-│   │   ├── mobilenet_v2_plant_disease_segmented.pt
-│   │   ├── mobilenet_v2_plant_disease_segmented.onnx
-│   │   └── model_metadata.json
+│   │   ├── densenet121_model.pt   # Copy of TorchScript model
+│   │   ├── densenet121_model.onnx # Copy of ONNX model
+│   │   └── model_metadata.json             # Copy of metadata
+│   │
 │   ├── Dev_Guide.md
 │   ├── api.py                              # FastAPI web service
-│   ├── streamlit_app.py                    # Streamlit demo UI
-│   ├── start_ngrok.ps1
-│   └── requirements.txt
+│   └── examples/                           # Test images
 │
-├── models/                                 # Training checkpoints and exports
-├── assets/                                 # Demo assets and treatments.json
-├── outputs/                                # Experiment outputs
-├── inference.py                            # Standalone inference script
-├── requirements.txt                        # Project dependencies
+├── venv/                                    # Python virtual environment (optional)
+│   └── (Python packages installed here)
+│
+│
+├── DockerFile
+│
+├── requirements.txt                         # Project dependencies
 └── README.md                               # Project overview
 ```
 
@@ -458,4 +441,5 @@ The resulting system is suitable as:
 * A teaching example
 * A foundation for deployable agricultural tools
 
----
+
+
