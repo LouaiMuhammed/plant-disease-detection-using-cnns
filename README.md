@@ -130,10 +130,10 @@ Rare classes are protected from collapse while avoiding unrealistic synthetic da
 **Validation accuracy:** ~98%
 **Macro F1:** ~0.94–0.96
 
-* **Validation accuracy:** `0.9725`
+* **Validation accuracy:** `0.9882`
 * **Classes:** 14
-* **Model version:** 2.0
-* **Training date:** 2026-03-16
+* **Model version:** 3.0
+* **Training date:** 2026-06-06
 
 Strong performance is maintained across both majority and minority classes, though some rare classes remain more difficult than the dominant classes.
 
@@ -180,7 +180,7 @@ plant-disease-detection-using-cnns/
 │
 ├── data/
 │   ├── train/                              # Training split
-│   ├── val/                                # Validation split
+│   └── val/                                # Validation split
 │
 ├── src/                                    # Source code modules
 │   ├── config.py                           # Configuration settings
@@ -197,9 +197,6 @@ plant-disease-detection-using-cnns/
 │   ├── 01. densetnet121_model.ipynb        # Model Development           
 │   └── 02. inference.ipynb        # Infernce Examples
 │   └── 03. image_segmentation.ipynb        # Segmentation Pipeline
-│
-├── scripts/
-│   └── rebuild_clean_split.py              # Rebuilds train/val split and checks leakage
 │
 ├── deployment/                             # Deployment package
 │   ├── models/
