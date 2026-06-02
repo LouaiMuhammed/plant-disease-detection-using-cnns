@@ -1,14 +1,16 @@
-﻿<img src="logo.png">
+<img src="logo.png">
 
 # 🌿 Plant Disease Detection Using Deep Learning
 
-A multi-class plant disease classification system built with PyTorch and transfer learning, designed for **real-world imbalance**, **interpretability**, and **mobile deployment**.
+A multi-class plant disease classification system built with PyTorch and transfer learning, designed for **real-world imbalance**, **interpretability**, and **deployment**.
 
-This project detects diseases from leaf images across citrus and mango crops and returns:
+This project detects diseases from leaf images across citrus and mango crops and now supports:
 
 * Predicted disease
 * Confidence score
 * Top-k alternative predictions
+* Background-removal-assisted inference
+* API and Streamlit-based deployment flows
 
 The pipeline is structured to move cleanly from research to production.
 
@@ -19,12 +21,13 @@ The pipeline is structured to move cleanly from research to production.
 This system uses deep convolutional neural networks with pretrained backbones to classify plant diseases from RGB leaf images.
 Rather than simplifying the problem to plant-level classification, the model performs **disease-level diagnosis** for practical usefulness.
 
-The final implementation focuses on:
+The current implementation focuses on:
 
 * Robust performance under severe class imbalance
 * Transfer learning for efficiency and accuracy
 * Confidence-aware predictions for real-world deployment
-* Exportability to mobile and backend environments
+* Exportability to backend and UI environments
+* Iteration through segmentation and hierarchical-classification experiments
 
 ---
 
@@ -54,11 +57,21 @@ Images are organized using the standard `ImageFolder` directory format.
 * Cutting weevil
 * Sooty mould
 
+### Current Dataset State
+
+The current cleaned split in `data/train` and `data/val` contains **14 active classes** and **21,883 images** total:
+
+* Train: 17,730 images
+* Validation: 4,153 images
+
+
+
 ### Dataset Challenges
 
-* Severe imbalance (some classes <50 images, others >10k)
+* Severe imbalance (some classes have only a few hundred images while others have several thousand)
 * Visual similarity between certain diseases
 * Mixed image sources and capture conditions
+* Legacy splits and duplicated/augmented variants required cleanup
 
 Instead of collapsing labels into plant-level categories, disease-level labels were preserved to maintain diagnostic value.
 
@@ -80,34 +93,35 @@ Instead of collapsing labels into plant-level categories, disease-level labels w
 
 * Backbone frozen initially
 * Classifier head trained first
-* Final convolutional block fine-tuned with lower learning rate
+* Later feature blocks fine-tuned with lower learning rate
 
 ### Configuration
 
-| Component     | Value                             |
-| ------------- | --------------------------------- |
-| Optimizer     | Adam                              |
-| Loss          | CrossEntropyLoss (class-weighted) |
-| Batch size    | 64                                |
-| Epochs        | 10–15                             |
-| LR (head)     | 1e-3                              |
-| LR (backbone) | 1e-4                              |
-| Input size    | 224×224                           |
-| Normalization | ImageNet mean/std                 |
+| Component     | Value                                      |
+| ------------- | ------------------------------------------ |
+| Optimizer     | **Adam** / SGD variants across experiments |
+| Loss          | CrossEntropyLoss (class-aware weighting)   |
+| Batch size    | 64                                         |
+| Epochs        | 10-15                                      |
+| LR (head)     | 1e-3                                       |
+| LR (backbone) | 1e-4                                       |
+| Input size    | 224x224                                    |
+| Normalization | ImageNet-stats                             |
 
 ---
 
 ## Handling Imbalance
 
 The dataset contains extreme class imbalance.
-This was addressed using a combination of:
+This is handled using a combination of:
 
 * WeightedRandomSampler
 * Class-weighted loss
 * Rare-class augmentation
 * Controlled augmentation strength
+* Configurable oversampling controls in `src/config.py`
 
-Rare classes were protected from collapse while avoiding unrealistic synthetic data.
+Rare classes are protected from collapse while avoiding unrealistic synthetic data.
 
 ---
 
@@ -116,9 +130,12 @@ Rare classes were protected from collapse while avoiding unrealistic synthetic d
 **Validation accuracy:** ~98%
 **Macro F1:** ~0.94–0.96
 
-Strong performance across both majority and minority classes.
+* **Validation accuracy:** `0.9725`
+* **Classes:** 14
+* **Model version:** 2.0
+* **Training date:** 2026-03-16
 
-Rare disease classes retained usable recall rather than collapsing into majority predictions.
+Strong performance is maintained across both majority and minority classes, though some rare classes remain more difficult than the dominant classes.
 
 ---
 
@@ -142,9 +159,9 @@ The model outputs a probability distribution over classes.
 
 Applications should interpret confidence as:
 
-* > 0.75 → high confidence
-* 0.5–0.75 → moderate
-* <0.5 → uncertain (prompt user to retake image)
+* > 0.75 -> high confidence
+* 0.5-0.75 -> moderate
+* < 0.5 -> uncertain (prompt user to retake image)
 
 Low confidence typically indicates:
 
@@ -152,43 +169,25 @@ Low confidence typically indicates:
 * Background clutter
 * Image outside training distribution
 
+
+
 ---
 
 ## Project Structure
 
-```
+```text
 plant-disease-detection-using-cnns/
 │
-├── data/                                   
-│   ├── train/                              # Training images (24,499 images)
-│   │   ├── citrus_black_spot/             # 136 images
-│   │   ├── citrus_canker/                 # 8,998 images
-│   │   ├── citrus_foliage_damage/         # 1,680 images
-│   │   ├── citrus_greening/               # 163 images
-│   │   ├── citrus_healthy/                # 5,107 images
-│   │   ├── citrus_mealybugs/              # 3,135 images
-│   │   ├── citrus_melanose/               # 2,080 images
-│   │   ├── mango_anthracnose/             # 400 images
-│   │   ├── mango_bacterial_canker/        # 400 images
-│   │   ├── mango_cutting_weevil/          # 400 images
-│   │   ├── mango_die_back/                # 400 images
-│   │   ├── mango_gall_midge/              # 400 images
-│   │   ├── mango_healthy/                 # 400 images
-│   │   ├── mango_powdery_mildew/          # 400 images
-│   │   └── mango_sooty_mould/             # 400 images
-│   │
-│   └── val/                                # Validation images (6,127 images)
-│       ├── citrus_black_spot/
-│       ├── citrus_canker/
-│       ├── mango_sooty_mould/
-│       └── (same structure as train/)
+├── data/
+│   ├── train/                              # Training split
+│   ├── val/                                # Validation split
 │
-├── src/                                     # Source code modules
-│   ├── __init__.py                         # Package init
+├── src/                                    # Source code modules
 │   ├── config.py                           # Configuration settings
 │   ├── datasets.py                         # Custom dataset classes
 │   ├── early_stopping.py                   # Early stopping logic
 │   ├── evaluate.py                         # Evaluation functions
+│   ├── main.py                             # Training entry point
 │   ├── models.py                           # Model architectures
 │   ├── train.py                            # Training functions
 │   ├── transforms.py                       # Data augmentation
@@ -199,8 +198,10 @@ plant-disease-detection-using-cnns/
 │   └── 02. inference.ipynb        # Infernce Examples
 │   └── 03. image_segmentation.ipynb        # Segmentation Pipeline
 │
+├── scripts/
+│   └── rebuild_clean_split.py              # Rebuilds train/val split and checks leakage
 │
-├── deployment/                              # Deployment package for developers
+├── deployment/                             # Deployment package
 │   ├── models/
 │   │   ├── densenet121_model.pt   # Copy of TorchScript model
 │   │   ├── densenet121_model.onnx # Copy of ONNX model
@@ -222,21 +223,170 @@ plant-disease-detection-using-cnns/
 
 ---
 
+## Reproducing the Project
+
+### 1. Clone the repository
+
+```bash
+git clone <your-repo-url>
+cd plant-disease-detection-using-cnns
+```
+
+### 2. Create and activate a virtual environment
+
+**Windows (PowerShell)**
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+**Linux / macOS**
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
+
+Install the main project requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+If you want to run the API separately, make sure these are available too:
+
+```bash
+pip install fastapi uvicorn python-multipart
+```
+
+### 4. Prepare the dataset
+
+The training code expects an `ImageFolder`-style layout inside `data/`:
+
+```text
+data/
+├── train/
+│   ├── class_a/
+│   ├── class_b/
+│   └── ...
+└── val/
+    ├── class_a/
+    ├── class_b/
+    └── ...
+```
+
+If your split needs rebuilding or leakage cleanup, use:
+
+```bash
+python scripts/rebuild_clean_split.py --data-dir data --seed 42
+```
+
+This script can:
+
+* detect duplicate files
+* regroup augmented variants
+* rebuild train/validation splits
+* back up the previous split before rewriting it
+
+### 5. Check configuration
+
+Main experiment settings live in `src/config.py`, including:
+
+* dataset paths
+* batch size
+* rare-class threshold
+* oversampling settings
+* learning rates
+* save paths for checkpoints
+
+Update those values if your local paths or experiment settings differ.
+
+### 6. Train the model
+
+The main training entry point is:
+
+```bash
+python -m src.main
+```
+
+Training utilities in `src/` handle:
+
+* loading `data/train` and `data/val`
+* rare-class-aware augmentation
+* weighted sampling
+* transfer learning
+* early stopping
+* checkpoint saving
+
+### 7. Run inference
+
+For a quick local test, edit the image path inside `inference.py` and run:
+
+```bash
+python inference.py
+```
+
+### 8. Run the deployed interfaces
+
+**FastAPI backend**
+
+```bash
+uvicorn deployment.api:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Then open:
+
+* `http://localhost:8000/`
+* `http://localhost:8000/docs`
+
+**Streamlit app**
+
+```bash
+streamlit run deployment/streamlit_app.py
+```
+
+### 9. Use the exported models
+
+The repository includes deployable artifacts in `models/` and `deployment/models/`, including:
+
+* `.pth` training checkpoints
+* `.pt` TorchScript exports
+* `.onnx` exports
+* metadata and calibration JSON files
+
+---
+
 ## Inference
 
 Example usage:
 
 ```python
-img = Image.open(r"path").convert("RGB")
-img_tensor = get_val_transform()(img)
-
-with torch.no_grad():
-    logits = model(img_tensor.unsqueeze(0).to(device))
-    probs = F.softmax(logits, dim=1)
-    conf, pred = torch.max(probs, dim=1)
-
-print(f"{classes[pred.item()]}: {conf.item():.2%}")
+classifier = PlantDiseaseClassifier(r"models/mobilenet_v2_plant_disease.pt")
+result = classifier.predict(r"path_to_image.jpg")
+print(result)
 ```
+
+The current inference flow may include:
+
+* Background removal using `rembg`
+* Resize to `224x224`
+* Tensor conversion and normalization
+* Softmax probabilities for confidence-aware output
+
+---
+
+## Deployment
+
+The project can now be run in multiple ways:
+
+* Standalone inference with `inference.py`
+* **FastAPI** backend via `deployment/api.py`
+* **Streamlit** UI via `deployment/streamlit_app.py`
+
+The API can also return treatment suggestions sourced from `assets/treatments.json`.
 
 ---
 
@@ -244,14 +394,17 @@ print(f"{classes[pred.item()]}: {conf.item():.2%}")
 
 The model can be exported to:
 
-* TorchScript (`.pt`) for mobile deployment
-* ONNX (`.onnx`) for cross-platform inference
+* TorchScript (`.pt`)
+* ONNX (`.onnx`)
 
-Metadata includes:
+Metadata now also includes:
 
 * class names
 * normalization
 * input size
+* validation accuracy
+* model version
+* training date
 
 ---
 
@@ -260,18 +413,20 @@ Metadata includes:
 * Some classes still have limited samples
 * Performance may drop on real field images
 * Labels depend on dataset annotations
-* Rare disease diversity is limited
+* The repo still contains some legacy 15-class artifacts alongside the current 14-class exports
+* Different experiments use slightly different preprocessing/model-loading paths
 
-These are acknowledged as part of the research scope.
+These are acknowledged as part of the research and deployment scope.
 
 ---
 
 ## Future Work
 
-* Collect expert-verified images
+* Collect more expert-verified images
 * Improve rare-class coverage
-* Add confidence calibration
-* Quantize model for faster mobile inference
+* Continue confidence calibration
+* Refine segmentation-assisted inference
+* Expand hierarchical classification experiments
 * Expand to additional crops
 
 ---
@@ -280,11 +435,11 @@ These are acknowledged as part of the research scope.
 
 This project shows that transfer learning with careful fine-tuning can achieve strong performance on complex, imbalanced plant disease datasets.
 
-The resulting model is suitable as:
+The resulting system is suitable as:
 
 * A research reference
 * A teaching example
-* A foundation for mobile agricultural tools
+* A foundation for deployable agricultural tools
 
 
 
