@@ -11,7 +11,7 @@ TRAIN_SPLIT = 0.8
 
 # Class imbalance settings
 RARE_THRESHOLD = 200
-OVERSAMPLING_ENABLED = True
+OVERSAMPLING_ENABLED = False
 # Strength of minority oversampling. 1.0 = inverse-frequency, >1.0 = more aggressive.
 OVERSAMPLING_POWER = 0.8
 # Clamp oversampling multipliers to avoid unstable training.
