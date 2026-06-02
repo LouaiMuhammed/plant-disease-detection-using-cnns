@@ -41,7 +41,6 @@ Images are organized using the standard `ImageFolder` directory format.
 * Greening
 * Black spot
 * Melanose
-* Mealybugs
 * Foliage damage
 
 **Mango**
@@ -67,17 +66,10 @@ Instead of collapsing labels into plant-level categories, disease-level labels w
 
 ## Model Architecture
 
-Two models were explored:
 
-### Prototype
+### Classifying Model
 
-* **ResNet-18** pretrained on ImageNet
-* Used to experiment with augmentation and imbalance strategies
-
-### Final Model
-
-* **MobileNetV2** pretrained on ImageNet
-* Lightweight and optimized for mobile deployment
+* **DenseNet121** pretrained on ImageNet
 * Fine-tuned classifier head and final convolutional block
 
 ---
@@ -121,7 +113,7 @@ Rare classes were protected from collapse while avoiding unrealistic synthetic d
 
 ## Results
 
-**Validation accuracy:** ~95–96%
+**Validation accuracy:** ~98%
 **Macro F1:** ~0.94–0.96
 
 Strong performance across both majority and minority classes.
@@ -203,23 +195,26 @@ plant-disease-detection-using-cnns/
 │   └── utils.py                            # Helper functions
 │
 ├── notebooks/                               # Jupyter notebooks
-│   ├── 01. data_exploration_and_prototype.ipynb          # Prototype            
-│   └── 02. mobilenet_model.ipynb        # Deployed Model
-│   └── 03. hierarchical_classifier.ipynb        # Separation Experiement
+│   ├── 01. densetnet121_model.ipynb        # Model Development           
+│   └── 02. inference.ipynb        # Infernce Examples
+│   └── 03. image_segmentation.ipynb        # Segmentation Pipeline
 │
 │
 ├── deployment/                              # Deployment package for developers
 │   ├── models/
-│   │   ├── mobilenet_v2_plant_disease.pt   # Copy of TorchScript model
-│   │   ├── mobilenet_v2_plant_disease.onnx # Copy of ONNX model
+│   │   ├── densenet121_model.pt   # Copy of TorchScript model
+│   │   ├── densenet121_model.onnx # Copy of ONNX model
 │   │   └── model_metadata.json             # Copy of metadata
 │   │
 │   ├── Dev_Guide.md
 │   ├── api.py                              # FastAPI web service
-│   └── examples/                           # (optional) Test images
+│   └── examples/                           # Test images
 │
 ├── venv/                                    # Python virtual environment (optional)
 │   └── (Python packages installed here)
+│
+│
+├── DockerFile
 │
 ├── requirements.txt                         # Project dependencies
 └── README.md                               # Project overview
@@ -291,5 +286,5 @@ The resulting model is suitable as:
 * A teaching example
 * A foundation for mobile agricultural tools
 
----
+
 
